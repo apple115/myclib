@@ -8,6 +8,11 @@ struct person {
     struct cstack stack_head;
 };
 
+void free_person( struct cstack* stack_head) {
+    struct person* pos=stack_entry(stack_head,struct person, stack_head);
+    free(pos);
+}
+
 int main() {
     STACK_HEAD(person_head);
 
@@ -29,15 +34,17 @@ int main() {
     stack_get_top(&person_head,&stack_pos);
     struct person* pos=stack_entry(stack_pos,struct person, stack_head);
     printf("name:%s  \nage:%d  \n\n",pos->name,pos->age);
-    stack_pop(&person_head);
+    stack_pop(&person_head,free_person);
 
     stack_get_top(&person_head,&stack_pos);
     pos=stack_entry(stack_pos,struct person, stack_head);
     printf("name:%s  \nage:%d  \n\n",pos->name,pos->age);
+    stack_pop(&person_head,free_person);
 
     printf("test get_stack_size %d\n\n",stack_get_size(&person_head));
-    stack_pop(&person_head);
 
     printf("stack is empty %d\n",stack_empty(&person_head));
+
+    stack_all_free(&person_head,free_person);
     return 0;
 }

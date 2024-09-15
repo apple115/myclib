@@ -10,7 +10,7 @@ struct list_head {
 
 #ifndef container_of
 #define container_of(ptr, type, member) \
-    ({ (type *)((char *)ptr - (char *)&((type *)0)->member)})
+    ({ (type *)((char *)ptr - (char *)&((type *)0)->member);})
 #endif
 
 #ifndef __container_of
@@ -137,7 +137,7 @@ static inline int list_is_head(const struct list_head *list, const struct list_h
     return list == head;
 }
 
-static inline void list_splice(const struct list_head *list,
+static inline void list_splice(struct list_head *list,
                                struct list_head *head)
 {
     if(!list_empty(list))
@@ -159,6 +159,16 @@ static inline void list_splice_tail(struct list_head *list,
  */
 #define list_entry(ptr, type, member) \
 	container_of(ptr, type, member)
+/**
+ * list_for_each	-	iterate over a list
+ * @pos:	the &struct list_head to use as a loop cursor.
+ * @head:	the head for your list.
+ */
+#define list_for_each(pos, head) \
+	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
+
+#define list_first_entry(ptr, type, member) \
+    list_entry((ptr)->next, type, member)
 
 #define list_for_each_entry(pos,head,member) \
     for(pos=__container_of((head)->next,pos,member); \
